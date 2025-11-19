@@ -13,11 +13,13 @@ function fish_prompt -d "Write out the prompt"
 	if test -L .venv && test -d .venv
 		source .venv/bin/activate.fish
 	# If environment from previous directory is currently activated
-	else if test -n "$VIRTUAL_ENV"
+	else if type -q deactivate
 		deactivate
 	end
 	# Get environment name, if one is active
-	if test -n "$VIRTUAL_ENV"
+	# The $VIRTUAL_ENV environment variable sometimes contains a stale value
+	# Instead check if deactivate command is valid
+	if type -q deactivate 
 		set PYTHON_VIRTUAL_ENVIRONMENT "$(basename $VIRTUAL_ENV) "	
 	end	
 	
