@@ -2,3 +2,8 @@
 !.gitignore
 !README.md
 !config.fish
+!functions/
+!functions/*.fish
+# Installed fish scripts
+functions/bass.fish
+functions/fisher.fish
