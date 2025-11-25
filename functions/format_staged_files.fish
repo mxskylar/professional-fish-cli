@@ -4,7 +4,8 @@ function format_staged_files
         	echo "Error: Paramenter -c/--cmd is required"
         	return 1
     	end
-	set staged_files (git diff --name-only --cached)
+	# Files added to staging in git, EXCLUDING deleted files
+	set staged_files (git diff --name-only --cached --diff-filter=d)
 	set files $staged_files
 	if set -ql _flag_ext
 		set files
