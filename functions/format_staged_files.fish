@@ -7,7 +7,7 @@ function format_staged_files
 	# Files added to staging in git, EXCLUDING deleted files
 	set staged_files (git diff --name-only --cached --diff-filter=d)
 	set files $staged_files
-	if set -ql _flag_ext
+	if set -ql _flag_ext && string length -q -- $staged_files
 		set files
 		# Prefix all file extensions with period, if not prefixed already
 		set file_extensions
