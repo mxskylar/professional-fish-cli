@@ -10,7 +10,7 @@ function fish_prompt -d "Write out the prompt"
 	# PYTHON VIRTUAL ENVIRONMENT
 	set PYTHON_VIRTUAL_ENVIRONMENT ""
 	# Toggle virtual environment
-	if test -L .venv && test -d .venv
+	if test $HOME != "$(pwd)" && test -d .venv
 		source .venv/bin/activate.fish
 	# If environment from previous directory is currently activated
 	else if type -q deactivate
@@ -20,7 +20,12 @@ function fish_prompt -d "Write out the prompt"
 	# The $VIRTUAL_ENV environment variable sometimes contains a stale value
 	# Instead check if deactivate command is valid
 	if type -q deactivate 
-		set PYTHON_VIRTUAL_ENVIRONMENT "$(basename $VIRTUAL_ENV) "	
+		set VENV_DIR "$(basename $VIRTUAL_ENV)"
+		if test "$VENV_DIR" = ".venv"
+			set PYTHON_VIRTUAL_ENVIRONMENT "$(basename (pwd)) " 
+		else
+			set PYTHON_VIRTUAL_ENVIRONMENT "$(basename $VIRTUAL_ENV) "
+		end	
 	end	
 	
 	# GCLOUD PROJECT
@@ -72,10 +77,7 @@ end
 set -gx PYTHONPATH "$HOME/scripts" "$PYTHONPATH"
 fish_add_path $(brew --prefix)"/opt/python@3.11/libexec/bin"
 set -gx VIRTUAL_ENV_DISABLE_PROMPT 1 # The prompt is stale when changing directories while the active virtual environment is not
-
-# DBT
-set -gx DBT_ENV_SECRET_GIT_CREDENTIAL "$(op item get "DBT Dev Environment Git Credential" --vault "Employee" --format json --fields password | jq .value --raw-output)"
-set -gx DEV_SCHEMA_NAME "skylarpape"
+fish_add_path "$HOME/.local/bin" # Adds uv to path
 
 # JAVA
 set -gx JAVA_HOME "$(brew --prefix)/opt/openjdk@17"
@@ -90,7 +92,7 @@ abbr --add --global gl "git log"
 abbr --add --global ga "git add"
 abbr --add --global gsth "git stash"
 abbr --add --global gst "git status"
-abbr --add --global gacm "git add . && git commit"
+abbr --add --global gacm "git add -A && git commit"
 abbr --add --global grv "git revert HEAD"
 abbr --add --global gsh "git show"
 abbr --add --global gpl "git pull"
@@ -101,9 +103,13 @@ abbr --add --global grb "git rebase"
 abbr --add --global gd "git diff"
 abbr --add --global gcl "git-cleanup-branch"
 abbr --add --global grl "git-rebase-off-latest"
+abbr --add --global gml "git-merge-off-latest"
 # docker
 abbr --add --global d "docker"
 abbr --add --global di "docker image"
 abbr --add --global dc "docker compose"
 abbr --add --global dsp "docker system prune -a"
 abbr --add --global dcp "docker container prune"
+# Project-Specific
+abbr --add --global canales "docker compose run --rm --entrypoint python canales"
+
